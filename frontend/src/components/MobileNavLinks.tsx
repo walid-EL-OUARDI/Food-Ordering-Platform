@@ -1,0 +1,18 @@
+import { Link } from "react-router-dom";
+import { Button } from "./ui/button";
+
+const MobileNavLinks = () => {
+  return (
+    <>
+      <Link
+        to="/user-profile"
+        className="font-bold bg-white hover:text-orange-500"
+      >
+        User Profile
+      </Link>
+      <Button className="flex-1 font-bold bg-orange-500">Log out</Button>
+    </>
+  );
+};
+
+export default MobileNavLinks;
