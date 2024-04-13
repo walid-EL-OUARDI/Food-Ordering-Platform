@@ -1,21 +1,23 @@
 import { Link } from "react-router-dom";
-import UserMenu from "./UserMenu";
+import DesktopNavLinks from "./DesktopNavLinks";
+import { useAppSelector } from "@/app/hooks/hooks";
+import { Function } from "@/types";
 
-const DesktopNav = () => {
+const DesktopNav = ({logout}: Function) => {
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+
   return (
     <div>
-      {
-        (true ? (
-          <UserMenu />
-        ) : (
-          <Link
-            to="/login"
-            className="text-2xl font-bold tracking-tight hidden md:block hover:text-orange-500 "
-          >
-            Log in
-          </Link>
-        ))
-      }
+      {isAuthenticated ? (
+        <DesktopNavLinks logout={logout} />
+      ) : (
+        <Link
+          to="/login"
+          className="text-2xl font-bold tracking-tight hidden md:block hover:text-orange-500 "
+        >
+          Log in
+        </Link>
+      )}
     </div>
   );
 };

@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
+import { Function } from "@/types";
 
-const MobileNavLinks = () => {
+const MobileNavLinks = ({ logout }: Function) => {
   return (
     <>
       <Link
@@ -10,7 +11,12 @@ const MobileNavLinks = () => {
       >
         User Profile
       </Link>
-      <Button className="flex-1 font-bold bg-orange-500">Log out</Button>
+      <Button
+        onClick={logout}
+        className="flex-1 font-bold bg-orange-500"
+      >
+        Log out
+      </Button>
     </>
   );
 };
