@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { useRegisterMutation } from "../features/auth/userApiSlice";
+import { useRegisterMutation } from "../app/api/userApiSlice";
 import { setCredentials } from "../features/auth/authSlice";
 import {
   Form,
@@ -16,10 +16,11 @@ import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "@/app/hooks/hooks";
 import { ToastContainer, toast } from "react-toastify";
+import LoadingButton from "@/components/LoadingButton";
 
 const formSchema = z
   .object({
-    name: z.string(),
+    name: z.string().min(4),
     email: z.string().email(),
     password: z.string().max(16),
     password_confirmation: z.string(),
@@ -32,7 +33,7 @@ const formSchema = z
 const RegistrationPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [register] = useRegisterMutation();
+  const [register, { isLoading }] = useRegisterMutation();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -140,7 +141,11 @@ const RegistrationPage = () => {
               />
               <div className="flex flex-col gap-2 ">
                 <Link to="/login">Already have an account?</Link>
-                <Button type="submit">Register</Button>
+                {isLoading ? (
+                  <LoadingButton />
+                ) : (
+                  <Button type="submit">Submit</Button>
+                )}
               </div>
             </form>
           </Form>

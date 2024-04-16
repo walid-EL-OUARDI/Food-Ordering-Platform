@@ -38,9 +38,9 @@ class AuthController extends Controller
                 'clientData' => new AuthResource($client),
                 'token' => $token,
             ], Response::HTTP_OK);
-        } catch (QueryException $e) {
+        } catch (\Throwable  $e) {
             return response()->json([
-                'message' => 'Database not connected',
+                'message' => 'Somthing went wrong',
                 'error' => $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -67,9 +67,9 @@ class AuthController extends Controller
                 'clientData' => new AuthResource($client),
                 'token' => $token,
             ], Response::HTTP_OK);
-        } catch (QueryException $e) {
+        } catch (\Throwable  $e) {
             return response()->json([
-                'message' => 'Database not connected',
+                'message' => 'Somthing went wrong',
                 'error' => $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

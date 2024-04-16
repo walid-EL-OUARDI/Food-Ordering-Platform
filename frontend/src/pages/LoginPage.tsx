@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { useAppDispatch } from "@/app/hooks/hooks";
-import { useLoginMutation } from "../features/auth/userApiSlice";
+import { useLoginMutation } from "../app/api/userApiSlice";
 import { setCredentials } from "../features/auth/authSlice";
 import {
   Form,
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
+import LoadingButton from "@/components/LoadingButton";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -25,7 +26,7 @@ const formSchema = z.object({
 const LoginPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [login] = useLoginMutation();
+  const [login,{isLoading}] = useLoginMutation();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
@@ -95,7 +96,15 @@ const LoginPage = () => {
               />
               <div className="flex flex-col gap-2 !mt-4">
                 <Link to="/register">No account yet?</Link>
-                <Button type="submit">login</Button>
+                {isLoading ? (
+                  <LoadingButton />
+                ) : (
+                  <Button
+                    type="submit"
+                  >
+                    Submit
+                  </Button>
+                )}
               </div>
             </form>
           </Form>

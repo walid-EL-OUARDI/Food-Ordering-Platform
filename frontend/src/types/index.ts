@@ -2,13 +2,16 @@ export interface Function {
   [key: string]: () => Promise<void>;
 }
 export interface UserState {
-  clientData: User | null;
-  token: string | null;
-  isAuthenticated: boolean | null;
+  clientData: User ;
+  token?: string | null;
+  isAuthenticated?: boolean | null;
 }
 export interface User {
   name: string;
   email: string;
+  address?: string;
+  country?: string;
+  city?: string;
 }
 export interface UserLoginCredentials {
   email: string;

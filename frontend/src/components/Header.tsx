@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import MobilNav from "./MobilNav";
 import DesktopNav from "./DesktopNav";
 import { useAppDispatch } from "@/app/hooks/hooks";
-import { useLogoutMutation } from "@/features/auth/userApiSlice";
+import { useLogoutMutation } from "@/app/api/userApiSlice";
 import { logoutUser } from "@/features/auth/authSlice";
 
 const Header = () => {
@@ -29,7 +29,7 @@ const Header = () => {
           <DesktopNav logout={onLogout} />
         </div>
         <div className="md:hidden">
-          <MobilNav logout={onLogout} ></MobilNav>
+          <MobilNav logout={onLogout}></MobilNav>
         </div>
       </div>
     </div>

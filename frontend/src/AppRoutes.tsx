@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterationPage from "./pages/RegisterationPage";
 import PrivateRoute from "./components/PrivateRoute";
+import UserProfilePage from "./pages/UserProfilePage";
 
 export const router = createBrowserRouter([
   {
@@ -15,7 +16,7 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    element: <PrivateRoute />,
+    element: <PrivateRoute fromAuthenticatedUsers />,
     children: [
       {
         path: "/login",
@@ -24,6 +25,19 @@ export const router = createBrowserRouter([
       {
         path: "/register",
         element: <RegisterationPage />,
+      },
+    ],
+  },
+  {
+    element: <PrivateRoute fromAuthenticatedUsers={false} />,
+    children: [
+      {
+        path: "/user-profile",
+        element: (
+          <Layout showHero={false}>
+            <UserProfilePage />
+          </Layout>
+        ),
       },
     ],
   },
