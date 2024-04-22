@@ -6,6 +6,12 @@ const MobileNavLinks = ({ logout }: Function) => {
   return (
     <>
       <Link
+        to="/manage-restaurant"
+        className="font-bold bg-white hover:text-orange-500"
+      >
+        Manage Restaurant
+      </Link>
+      <Link
         to="/user-profile"
         className="font-bold bg-white hover:text-orange-500"
       >

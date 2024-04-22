@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Profile\ProfileController;
+use App\Http\Controllers\Restaurant\RestaurantController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
@@ -15,7 +16,12 @@ Route::controller(AuthController::class)->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+   
+    Route::put('/update-user-profile', [ProfileController::class, 'updateUserInfo']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::put('/update-user-profile', [ProfileController::class, 'updateUserInfo']);
+
+    Route::post('/add-restaurant', [RestaurantController::class, 'createRestaurant']);
+    Route::post('/update-restaurant', [RestaurantController::class, 'updateRestaurant']);
+    Route::get('/get-restaurant', [RestaurantController::class, 'getRestaurantData']);
 });

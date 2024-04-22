@@ -2,9 +2,12 @@ export interface Function {
   [key: string]: () => Promise<void>;
 }
 export interface UserState {
-  clientData: User ;
+  clientData: User;
   token?: string | null;
   isAuthenticated?: boolean | null;
+}
+export interface RestaurantState {
+  restaurantData: Restaurant;
 }
 export interface User {
   name: string;
@@ -12,6 +15,20 @@ export interface User {
   address?: string;
   country?: string;
   city?: string;
+}
+export interface Menu {
+  name: string;
+  price: number;
+}
+export interface Restaurant {
+  name: string;
+  country: string;
+  city: string;
+  delivery_price: number;
+  estimated_delivery_time: number;
+  cuisines: [string, ...string[]];
+  menus: Menu[];
+  image_url: string;
 }
 export interface UserLoginCredentials {
   email: string;

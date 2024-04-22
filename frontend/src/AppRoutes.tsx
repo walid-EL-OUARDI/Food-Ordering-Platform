@@ -5,6 +5,8 @@ import LoginPage from "./pages/LoginPage";
 import RegisterationPage from "./pages/RegisterationPage";
 import PrivateRoute from "./components/PrivateRoute";
 import UserProfilePage from "./pages/UserProfilePage";
+import DetailsSection from "./components/forms/manage-restaurant-form/DetailsSection";
+import ManageRestaurantPage from "./pages/ManageRestaurantPage";
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +38,14 @@ export const router = createBrowserRouter([
         element: (
           <Layout showHero={false}>
             <UserProfilePage />
+          </Layout>
+        ),
+      },
+      {
+        path: "/manage-restaurant",
+        element: (
+          <Layout showHero={false}>
+            <ManageRestaurantPage />
           </Layout>
         ),
       },

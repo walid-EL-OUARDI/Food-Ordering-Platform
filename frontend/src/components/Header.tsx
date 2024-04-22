@@ -4,6 +4,7 @@ import DesktopNav from "./DesktopNav";
 import { useAppDispatch } from "@/app/hooks/hooks";
 import { useLogoutMutation } from "@/app/api/userApiSlice";
 import { logoutUser } from "@/features/auth/authSlice";
+import { deleteRestaurant } from "@/features/restaurant/restaurantSlice";
 
 const Header = () => {
   const dispatch = useAppDispatch();
@@ -12,6 +13,7 @@ const Header = () => {
     try {
       await logout().unwrap();
       dispatch(logoutUser());
+      dispatch(deleteRestaurant());
     } catch (err) {
       console.log(err);
     }
