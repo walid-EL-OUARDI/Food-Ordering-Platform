@@ -5,8 +5,9 @@ import LoginPage from "./pages/LoginPage";
 import RegisterationPage from "./pages/RegisterationPage";
 import PrivateRoute from "./components/PrivateRoute";
 import UserProfilePage from "./pages/UserProfilePage";
-import DetailsSection from "./components/forms/manage-restaurant-form/DetailsSection";
 import ManageRestaurantPage from "./pages/ManageRestaurantPage";
+import SearchPage from "./pages/SearchPage";
+import DetailsPage from "./pages/DetailsPage";
 
 export const router = createBrowserRouter([
   {
@@ -14,6 +15,22 @@ export const router = createBrowserRouter([
     element: (
       <Layout>
         <HomePage />
+      </Layout>
+    ),
+  },
+  {
+    path: "/search/:country",
+    element: (
+      <Layout showHero={false}>
+        <SearchPage />
+      </Layout>
+    ),
+  },
+  {
+    path: "/details/:restaurantId",
+    element: (
+      <Layout showHero={false}>
+        <DetailsPage />
       </Layout>
     ),
   },

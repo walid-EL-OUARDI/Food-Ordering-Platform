@@ -10,11 +10,12 @@ use App\Services\FileService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 class RestaurantController extends Controller
 {
-    public function getRestaurantData(Request $request)
+    public function getUserRestaurant(Request $request): JsonResponse
     {
         try {
 
@@ -34,7 +35,7 @@ class RestaurantController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    public function createRestaurant(RestaurantRequest $request, FileService $fileService)
+    public function createRestaurant(RestaurantRequest $request, FileService $fileService): JsonResponse
     {
         try {
             $imageUrl = $fileService->uploadRestaurantImage($request->image);
@@ -66,7 +67,7 @@ class RestaurantController extends Controller
         }
     }
 
-    public function updateRestaurant(RestaurantRequest $request, FileService $fileService)
+    public function updateRestaurant(RestaurantRequest $request, FileService $fileService): JsonResponse
     {
         try {
             $restaurant = $request->user()->restaurant()->first();
@@ -96,6 +97,64 @@ class RestaurantController extends Controller
         } catch (\Throwable $e) {
             return response()->json([
                 'error' => 'Failed to update restaurant',
+                'message' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public  function getRestaurants(Request $request, string $country)
+
+    {
+        try {
+            $searchParams = $request->all();
+            $restaurants = Restaurant::query()->where('country', $country);
+            $city = Arr::get($searchParams, 'searchQuery', '');
+            $cuisines = Arr::get($searchParams, 'cuisines', '');
+            $sortOption = Arr::get($searchParams, 'sortOption', '');
+
+            if ($city) {
+                $restaurants->where('city', $city);
+            }
+
+            if ($sortOption) {
+                $restaurants->orderBy($sortOption);
+            }
+
+            if ($cuisines) {
+                $cuisines = explode(',', $request->cuisines);
+                $restaurants->whereJsonContains('cuisines', $cuisines);
+            }
+            $restaurants = $restaurants->paginate(5);
+
+            return response()->json([
+                "restaurants" => RestaurantResource::collection($restaurants),
+                "meta" => [
+                    "total" => $restaurants->total(),
+                    "pages" => $restaurants->lastPage(),
+                    "page" => $restaurants->currentPage(),
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getRestaurantById(int $restaurantId)
+    {
+        try {
+            $restaurant = Restaurant::find($restaurantId);
+            if ($restaurant) {
+                return response()->json([
+                    "restaurant" => new RestaurantResource($restaurant->load('menus')),
+                ]);
+            }
+            return response()->json([
+                "restaurant" => [],
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
                 'message' => $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

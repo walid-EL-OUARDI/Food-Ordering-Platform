@@ -9,7 +9,7 @@ import MenuSection from "./MenuSection";
 import LoadingButton from "@/components/LoadingButton";
 import { Button } from "@/components/ui/button";
 import ImageSection from "./ImageSection";
-import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
+import { useAppDispatch } from "@/app/hooks/hooks";
 import { useEffect } from "react";
 import { setRestaurantData } from "@/features/restaurant/restaurantSlice";
 import { RestaurantState } from "@/types";

@@ -21,6 +21,7 @@ export interface Menu {
   price: number;
 }
 export interface Restaurant {
+  id: number;
   name: string;
   country: string;
   city: string;
@@ -29,6 +30,15 @@ export interface Restaurant {
   cuisines: [string, ...string[]];
   menus: Menu[];
   image_url: string;
+}
+
+export interface getRestaurantsResponse {
+  restaurants: Restaurant[];
+  meta: {
+    total: number;
+    pages: number;
+    page: number;
+  };
 }
 export interface UserLoginCredentials {
   email: string;

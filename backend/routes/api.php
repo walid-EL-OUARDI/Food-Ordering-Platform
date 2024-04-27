@@ -16,12 +16,15 @@ Route::controller(AuthController::class)->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-   
+
     Route::put('/update-user-profile', [ProfileController::class, 'updateUserInfo']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::post('/add-restaurant', [RestaurantController::class, 'createRestaurant']);
     Route::post('/update-restaurant', [RestaurantController::class, 'updateRestaurant']);
-    Route::get('/get-restaurant', [RestaurantController::class, 'getRestaurantData']);
+    Route::get('/get-user-restaurant', [RestaurantController::class, 'getUserRestaurant']);
 });
+
+Route::get('/get-restaurants/{country}', [RestaurantController::class, 'getRestaurants']);
+Route::get('/get-restaurant/{restaurantId}', [RestaurantController::class, 'getRestaurantById']);
