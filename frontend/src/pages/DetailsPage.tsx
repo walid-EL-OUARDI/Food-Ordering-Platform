@@ -1,18 +1,99 @@
 import { useGetRestaurantByIdQuery } from "@/app/api/restaurantApiSlice";
+import { useUpdateUserInfoMutation } from "@/app/api/userApiSlice";
+import { useAppDispatch } from "@/app/hooks/hooks";
+import CheckoutButton from "@/components/CheckoutButton";
 import Menu from "@/components/MenuItem";
+import OrderSummary from "@/components/OrderSummary";
 import RestaurantInfo from "@/components/RestaurantInfo";
+import { UserFormData } from "@/components/forms/UserProfileForm";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-
+import { Card, CardFooter } from "@/components/ui/card";
+import { updateUserCredentials } from "@/features/auth/authSlice";
 import { url } from "@/helpres";
+import { Menu as MenuType } from "@/types";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
+export type CartItem = {
+  name: string;
+  price: number;
+  quantity: number;
+};
 const DetailsPage = () => {
   const { restaurantId } = useParams();
   const { data } = useGetRestaurantByIdQuery(Number(restaurantId));
-  console.log(data);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    const storedCartItems = sessionStorage.getItem(`cartItems-${restaurantId}`);
+    return storedCartItems ? JSON.parse(storedCartItems) : [];
+  });
+  const [updateUserInfo, { isLoading }] = useUpdateUserInfoMutation();
+  const dispatch = useAppDispatch();
+
+  const addToCart = (menu: MenuType) => {
+    setCartItems((prevCartItems) => {
+      const cartItemExist = prevCartItems.find(
+        (prevCartItem) => prevCartItem.name === menu.name
+      );
+      let updatedCartItems;
+      if (cartItemExist) {
+        updatedCartItems = prevCartItems.map((prevCartItem) =>
+          prevCartItem.name === menu.name
+            ? { ...prevCartItem, quantity: prevCartItem.quantity + 1 }
+            : { ...prevCartItem }
+        );
+      } else {
+        updatedCartItems = [
+          ...prevCartItems,
+          {
+            name: menu.name,
+            price: menu.price,
+            quantity: 1,
+          },
+        ];
+      }
+      sessionStorage.setItem(
+        `cartItems-${restaurantId}`,
+        JSON.stringify(updatedCartItems)
+      );
+
+      return updatedCartItems;
+    });
+  };
+
+  const removeCartItem = (cartItem: CartItem) => {
+    setCartItems((prevCartItems) => {
+      let updatedCartItems = prevCartItems.filter(
+        (prevCartItem) => prevCartItem.name !== cartItem.name
+      );
+      sessionStorage.setItem(
+        `cartItems-${restaurantId}`,
+        JSON.stringify(updatedCartItems)
+      );
+
+      return updatedCartItems;
+    });
+  };
+
+  const updateUserData = async (userData: UserFormData) => {
+    try {
+      const res = await updateUserInfo(userData).unwrap();
+      dispatch(updateUserCredentials(res));
+      toast.success("Profile updated successfully");
+    } catch (res: any) {
+      console.log(res);
+      if (res.data.errors) {
+        Object.values(res.data.errors).forEach((value: any) => {
+          toast.error(value[0]);
+        });
+      }
+    }
+  };
+
   if (data?.restaurant) {
     return (
       <div className="flex flex-col gap-10">
+        <ToastContainer />
         <AspectRatio ratio={16 / 5}>
           <img
             src={url(data?.restaurant?.image_url)}
@@ -23,9 +104,29 @@ const DetailsPage = () => {
           <div className="flex flex-col gap-4">
             <RestaurantInfo restaurant={data.restaurant} />
             <span className="text-2xl font-bold tracking-tight">Menu</span>
-            {data.restaurant.menus.map((menu) => (
-              <Menu menu={menu} />
+            {data.restaurant.menus.map((menu, index) => (
+              <Menu
+                key={index}
+                addToCart={() => addToCart(menu)}
+                menu={menu}
+              />
             ))}
+          </div>
+          <div>
+            <Card>
+              <OrderSummary
+                restaurant={data.restaurant}
+                cartItems={cartItems}
+                removeCartItem={removeCartItem}
+              />
+              <CardFooter>
+                <CheckoutButton
+                  disabled={cartItems.length === 0}
+                  isLoading={isLoading}
+                  onSave={updateUserData}
+                />
+              </CardFooter>
+            </Card>
           </div>
         </div>
       </div>

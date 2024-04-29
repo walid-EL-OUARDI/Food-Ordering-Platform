@@ -27,9 +27,10 @@ const formSchema = z.object({
 type Props = {
   onSave: (userProfileData: UserFormData) => void;
   isLoading: boolean;
+  title?: string;
 };
 
-const UserProfileForm = ({ onSave, isLoading }: Props) => {
+const UserProfileForm = ({ onSave, isLoading, title = "submit" }: Props) => {
   const currentUser = useAppSelector((state) => state.auth.clientData);
   const form = useForm<UserFormData>({
     resolver: zodResolver(formSchema),
@@ -139,7 +140,7 @@ const UserProfileForm = ({ onSave, isLoading }: Props) => {
               type="submit"
               className="bg-orange-500"
             >
-              Submit
+              {title}
             </Button>
           )}
         </form>
