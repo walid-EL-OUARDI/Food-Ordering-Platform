@@ -49,8 +49,23 @@ class User extends Authenticatable
         ];
     }
 
+    public function getUserInfo()
+    {
+        return [
+            "name" => $this->name,
+            "email" => $this->email,
+            'address' => $this->address,
+            'country' => $this->country,
+            'city' => $this->city,
+        ];
+    }
+
     public function restaurant()
     {
         return $this->hasOne(Restaurant::class);
+    }
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 }

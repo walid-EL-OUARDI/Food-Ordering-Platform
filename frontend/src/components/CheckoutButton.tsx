@@ -4,15 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 import UserProfileForm, { UserFormData } from "./forms/UserProfileForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import YcpayForm from "./forms/youcanpayform/YcpayForm";
 type Props = {
   disabled: boolean;
   isLoading: boolean;
   onSave: (userFormData: UserFormData) => void;
+  onPay: () => void;
 };
 
-const CheckoutButton = ({ disabled, onSave, isLoading }: Props) => {
+const CheckoutButton = ({ disabled, onSave, onPay, isLoading }: Props) => {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const navigate = useNavigate();
+
   if (!isAuthenticated) {
     return (
       <Button
@@ -57,7 +60,7 @@ const CheckoutButton = ({ disabled, onSave, isLoading }: Props) => {
               </TabsList>
             </TabsContent>
             <TabsContent value="payment-getway">
-              Change your password here.
+              <YcpayForm onPay={onPay} />
             </TabsContent>
           </Tabs>
         </DialogContent>

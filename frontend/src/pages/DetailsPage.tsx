@@ -1,6 +1,11 @@
+import {
+  useMarkOrderAsPaidMutation,
+  usePayOrderMutation,
+  useStoreOrderMutation,
+} from "@/app/api/orderApiSlice";
 import { useGetRestaurantByIdQuery } from "@/app/api/restaurantApiSlice";
 import { useUpdateUserInfoMutation } from "@/app/api/userApiSlice";
-import { useAppDispatch } from "@/app/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import CheckoutButton from "@/components/CheckoutButton";
 import Menu from "@/components/MenuItem";
 import OrderSummary from "@/components/OrderSummary";
@@ -9,6 +14,7 @@ import { UserFormData } from "@/components/forms/UserProfileForm";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Card, CardFooter } from "@/components/ui/card";
 import { updateUserCredentials } from "@/features/auth/authSlice";
+import { setOrder } from "@/features/order/OrderSlice";
 import { url } from "@/helpres";
 import { Menu as MenuType } from "@/types";
 import { useState } from "react";
@@ -21,6 +27,7 @@ export type CartItem = {
   quantity: number;
 };
 const DetailsPage = () => {
+  const ycPay = useAppSelector((state) => state.payment.ycPay);
   const { restaurantId } = useParams();
   const { data } = useGetRestaurantByIdQuery(Number(restaurantId));
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
@@ -28,7 +35,11 @@ const DetailsPage = () => {
     return storedCartItems ? JSON.parse(storedCartItems) : [];
   });
   const [updateUserInfo, { isLoading }] = useUpdateUserInfoMutation();
+  const [storeOrder] = useStoreOrderMutation();
+  const [payOrder] = usePayOrderMutation();
+  const [MarkOrderAsPaid] = useMarkOrderAsPaidMutation();
   const dispatch = useAppDispatch();
+  const orderId = useAppSelector((state) => state.order.order.id);
 
   const addToCart = (menu: MenuType) => {
     setCartItems((prevCartItems) => {
@@ -79,6 +90,13 @@ const DetailsPage = () => {
     try {
       const res = await updateUserInfo(userData).unwrap();
       dispatch(updateUserCredentials(res));
+      if (restaurantId) {
+        const orderResponse = await storeOrder({
+          restaurantId,
+          cartItems,
+        }).unwrap();
+        dispatch(setOrder(orderResponse));
+      }
       toast.success("Profile updated successfully");
     } catch (res: any) {
       console.log(res);
@@ -90,13 +108,36 @@ const DetailsPage = () => {
     }
   };
 
+  const hundlePayment = async () => {
+    try {
+      if (restaurantId) {
+        const paymemtResponse = await payOrder(orderId).unwrap();
+        ycPay.pay(paymemtResponse.token).then(handleYcpSuccess);
+      }
+    } catch (res: any) {
+      console.log(res);
+    }
+  };
+
+  const handleYcpSuccess = async ({ response }) => {
+    try {
+      if (response?.order_id) {
+        console.log(response);
+        const res = await MarkOrderAsPaid(response?.order_id).unwrap();
+        dispatch(setOrder(res));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   if (data?.restaurant) {
     return (
       <div className="flex flex-col gap-10">
         <ToastContainer />
         <AspectRatio ratio={16 / 5}>
           <img
-            src={url(data?.restaurant?.image_url)}
+            src={url(data.restaurant?.image_url)}
             className="rounded-md object-cover h-full w-full"
           />
         </AspectRatio>
@@ -124,6 +165,7 @@ const DetailsPage = () => {
                   disabled={cartItems.length === 0}
                   isLoading={isLoading}
                   onSave={updateUserData}
+                  onPay={() => hundlePayment()}
                 />
               </CardFooter>
             </Card>

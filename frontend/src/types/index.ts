@@ -19,6 +19,7 @@ export interface User {
 export interface Menu {
   name: string;
   price: number;
+  quantity?: number;
 }
 export interface Restaurant {
   id: number;
@@ -49,4 +50,10 @@ export interface UserRegisterCredentials {
   email: string;
   password: string;
   password_confirmation: string;
+}
+export interface Order {
+  id: string;
+  total_price: number;
+  status: string;
+  menus: Menu[];
 }
