@@ -14,9 +14,17 @@ class MenuResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
-            'name' => $this->name,
-            'price' => $this->price,
-        ];
+        if ($request->path() === 'api/get-user-orders') {
+            return [
+                'name' => $this->name,
+                'price' => $this->price,
+                'quantity' => $this->pivot->quantity,
+            ];
+        } else {
+            return [
+                'name' => $this->name,
+                'price' => $this->price,
+            ];
+        }
     }
 }

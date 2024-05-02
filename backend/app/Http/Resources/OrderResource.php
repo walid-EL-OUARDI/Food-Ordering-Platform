@@ -16,9 +16,12 @@ class OrderResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'user' => new AuthResource($this->whenLoaded('user')),
             'total_price' => $this->total_price,
             'status' => $this->status,
+            'created_at' => $this->created_at,
             'menus' => MenuResource::collection($this->whenLoaded('menus')),
+            'restaurant' => new RestaurantResource($this->whenLoaded('restaurant')),
         ];
     }
 }

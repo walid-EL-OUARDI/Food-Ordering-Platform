@@ -8,6 +8,7 @@ import UserProfilePage from "./pages/UserProfilePage";
 import ManageRestaurantPage from "./pages/ManageRestaurantPage";
 import SearchPage from "./pages/SearchPage";
 import DetailsPage from "./pages/DetailsPage";
+import OrderStatusPage from "./pages/OrderStatusPage";
 
 export const router = createBrowserRouter([
   {
@@ -31,6 +32,14 @@ export const router = createBrowserRouter([
     element: (
       <Layout showHero={false}>
         <DetailsPage />
+      </Layout>
+    ),
+  },
+  {
+    path: "/orders-status",
+    element: (
+      <Layout showHero={false}>
+        <OrderStatusPage />
       </Layout>
     ),
   },

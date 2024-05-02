@@ -53,7 +53,10 @@ export interface UserRegisterCredentials {
 }
 export interface Order {
   id: string;
+  user: User;
+  created_at: string;
   total_price: number;
   status: string;
   menus: Menu[];
+  restaurant?: Restaurant;
 }

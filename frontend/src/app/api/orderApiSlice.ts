@@ -26,6 +26,12 @@ const userApiSlice = apiSlice.injectEndpoints({
         method: "POST",
       }),
     }),
+    getUserOrders: builder.query<{ orders: Order[] }, void>({
+      query: () => ({
+        url: `get-user-orders`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -33,4 +39,5 @@ export const {
   useStoreOrderMutation,
   usePayOrderMutation,
   useMarkOrderAsPaidMutation,
+  useGetUserOrdersQuery,
 } = userApiSlice;

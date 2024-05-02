@@ -43,6 +43,7 @@ class OrderController extends Controller
                 $menu->orders()->attach($order->id, ['quantity' =>  $cartItem['quantity']]);
                 $order->total_price += $cartItem['quantity'] * $menu->price;
             }
+            $order->total_price += $restaurant->delivery_price;
             $order->save();
             DB::commit();
             return response()->json(["order" => new OrderResource($order->load('menus'))]);;
@@ -70,6 +71,20 @@ class OrderController extends Controller
             return response()->json(["order" => new OrderResource($order->load('menus'))]);
         } catch (\Throwable $e) {
             DB::rollBack();
+            return response()->json([
+                'error' => 'Failed to create order',
+                'message' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    public function getUserOrders(Request $request)
+    {
+        try {
+            $user = $request->user();
+            $orders = Order::where('user_id', $user->id)->get();
+            // return response()->json(["orders" => $orders]);
+            return response()->json(["orders" => OrderResource::collection($orders->load(['menus', 'restaurant', 'user']))]);
+        } catch (\Throwable $e) {
             return response()->json([
                 'error' => 'Failed to create order',
                 'message' => $e->getMessage(),
