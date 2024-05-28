@@ -14,7 +14,7 @@ class MenuResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        if ($request->path() === 'api/get-user-orders') {
+        if ($request->path() === 'api/get-user-orders' || $request->path() === 'api/get-restaurant-orders') {
             return [
                 'name' => $this->name,
                 'price' => $this->price,

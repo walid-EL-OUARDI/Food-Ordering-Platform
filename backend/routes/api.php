@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/pay-order/{orderId}', [YouCanPayController::class, 'createToken']);
     Route::post('/mark-order-aspaid/{orderId}', [OrderController::class, 'markOrderAsPaid']);
     Route::get('/get-user-orders', [OrderController::class, 'getUserOrders']);
+    Route::get('/get-restaurant-orders', [OrderController::class, 'getRestaurantOrders']);
 });
 
 Route::get('/get-restaurants/{country}', [RestaurantController::class, 'getRestaurants']);

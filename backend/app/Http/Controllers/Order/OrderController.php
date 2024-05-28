@@ -91,4 +91,32 @@ class OrderController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function getRestaurantOrders(Request $request)
+    {
+        $user = $request->user();
+        $orders = Order::where('restaurant_id', $user->restaurant->id)->get();
+        if (!$orders) {
+            return  response()->json(["orders" => []]);
+        }
+
+        return response()->json(["orders" => OrderResource::collection($orders->load(['menus', 'user']))]);
+    }
+    public function getRestaurantOrderStaus(Request $request, $orderId)
+    {
+        try {
+            $order = Order::find($orderId);
+            if (!$order) {
+                throw new NotFoundResourceException;
+            }
+            $order->status = $request->status;
+
+            return response()->json(["orders" => OrderResource::collection($order->load(['menus', 'restaurant', 'user']))]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => 'Failed to find order',
+                'message' => $e->getMessage(),
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
